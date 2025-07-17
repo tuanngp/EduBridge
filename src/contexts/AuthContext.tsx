@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User, UserRole, AuthContextType } from '../types';
-import { getUsers, saveUser, getCurrentUser, setCurrentUser, generateId } from '../utils/storage';
+import apiService from '../services/api';
 
 const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -13,29 +13,36 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const currentUser = getCurrentUser();
-    setUser(currentUser);
-    setLoading(false);
+    loadCurrentUser();
   }, []);
+
+  const loadCurrentUser = async () => {
+    try {
+      const response = await apiService.getCurrentUser();
+      if (response.data) {
+        setUser(response.data.user);
+      }
+    } catch (error) {
+      console.error('Failed to load current user:', error);
+    } finally {
+      setLoading(false);
+    }
+  };
 
   const login = async (email: string, password: string): Promise<boolean> => {
     setLoading(true);
     try {
-      const users = getUsers();
-      const foundUser = users.find(u => u.email === email);
-      
-      if (foundUser) {
-        setUser(foundUser);
-        setCurrentUser(foundUser);
-        setLoading(false);
+      const response = await apiService.login({ email, password });
+      if (response.data) {
+        setUser(response.data.user);
         return true;
       }
-      
-      setLoading(false);
       return false;
     } catch (error) {
-      setLoading(false);
+      console.error('Login error:', error);
       return false;
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -47,36 +54,38 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   ): Promise<boolean> => {
     setLoading(true);
     try {
-      const users = getUsers();
-      const existingUser = users.find(u => u.email === email);
-      
-      if (existingUser) {
-        setLoading(false);
-        return false;
+      const response = await apiService.register({ email, password, name, role });
+      if (response.data) {
+        setUser(response.data.user);
+        return true;
       }
-
-      const newUser: User = {
-        id: generateId(),
-        email,
-        name,
-        role,
-        createdAt: new Date().toISOString(),
-      };
-
-      saveUser(newUser);
-      setUser(newUser);
-      setCurrentUser(newUser);
-      setLoading(false);
-      return true;
-    } catch (error) {
-      setLoading(false);
       return false;
+    } catch (error) {
+      console.error('Registration error:', error);
+      return false;
+    } finally {
+      setLoading(false);
     }
   };
 
-  const logout = (): void => {
-    setUser(null);
-    setCurrentUser(null);
+  const logout = async (): Promise<void> => {
+    try {
+      await apiService.logout();
+    } catch (error) {
+      console.error('Logout error:', error);
+    } finally {
+      setUser(null);
+    }
+  };
+
+  const verifyEmail = async (token: string): Promise<boolean> => {
+    try {
+      await apiService.verifyEmail(token);
+      return true;
+    } catch (error) {
+      console.error('Email verification error:', error);
+      return false;
+    }
   };
 
   const value: AuthContextType = {
@@ -84,6 +93,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     login,
     register,
     logout,
+    verifyEmail,
     loading,
   };
 
