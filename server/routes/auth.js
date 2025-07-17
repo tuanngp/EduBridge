@@ -1,10 +1,10 @@
-const express = require('express');
-const bcrypt = require('bcryptjs');
-const jwt = require('jsonwebtoken');
-const { v4: uuidv4 } = require('uuid');
-const supabase = require('../config/supabase');
-const { authenticateToken } = require('../middleware/auth');
-const { sendVerificationEmail } = require('../services/emailService');
+import express from 'express';
+import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
+import { v4 as uuidv4 } from 'uuid';
+import supabase from '../config/supabase.js';
+import { authenticateToken } from '../middleware/auth.js';
+import { sendVerificationEmail } from '../services/emailService.js';
 
 const router = express.Router();
 
@@ -244,4 +244,4 @@ router.post('/logout', authenticateToken, (req, res) => {
   res.json({ message: 'Logged out successfully' });
 });
 
-module.exports = router;
+export default router;

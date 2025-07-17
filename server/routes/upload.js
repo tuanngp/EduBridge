@@ -1,7 +1,7 @@
-const express = require('express');
-const multer = require('multer');
-const { uploadToCloudinary } = require('../config/cloudinary');
-const { authenticateToken } = require('../middleware/auth');
+import express from 'express';
+import multer from 'multer';
+import { uploadToCloudinary } from '../config/cloudinary.js';
+import { authenticateToken } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -107,4 +107,4 @@ router.use((error, req, res, next) => {
   next(error);
 });
 
-module.exports = router;
+export default router;

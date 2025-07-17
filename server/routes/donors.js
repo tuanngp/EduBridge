@@ -1,7 +1,7 @@
-const express = require('express');
-const { v4: uuidv4 } = require('uuid');
-const supabase = require('../config/supabase');
-const { authenticateToken, requireRole, requireVerified } = require('../middleware/auth');
+import express from 'express';
+import { v4 as uuidv4 } from 'uuid';
+import supabase from '../config/supabase.js';
+import { authenticateToken, requireRole, requireVerified } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -141,4 +141,4 @@ router.get('/schools', authenticateToken, requireRole(['donor']), requireVerifie
   }
 });
 
-module.exports = router;
+export default router;

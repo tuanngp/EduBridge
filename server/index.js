@@ -1,17 +1,19 @@
-const express = require('express');
-const cors = require('cors');
-const helmet = require('helmet');
-const morgan = require('morgan');
-const rateLimit = require('express-rate-limit');
-require('dotenv').config();
+import express from 'express';
+import cors from 'cors';
+import helmet from 'helmet';
+import morgan from 'morgan';
+import rateLimit from 'express-rate-limit';
+import dotenv from 'dotenv';
 
-const authRoutes = require('./routes/auth');
-const donorRoutes = require('./routes/donors');
-const schoolRoutes = require('./routes/schools');
-const deviceRoutes = require('./routes/devices');
-const transferRoutes = require('./routes/transfers');
-const adminRoutes = require('./routes/admin');
-const uploadRoutes = require('./routes/upload');
+import authRoutes from './routes/auth.js';
+import donorRoutes from './routes/donors.js';
+import schoolRoutes from './routes/schools.js';
+import deviceRoutes from './routes/devices.js';
+import transferRoutes from './routes/transfers.js';
+import adminRoutes from './routes/admin.js';
+import uploadRoutes from './routes/upload.js';
+
+dotenv.config();
 
 const app = express();
 const PORT = process.env.PORT || 3001;

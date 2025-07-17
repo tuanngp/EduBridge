@@ -1,6 +1,6 @@
-const express = require('express');
-const supabase = require('../config/supabase');
-const { authenticateToken, requireRole } = require('../middleware/auth');
+import express from 'express';
+import supabase from '../config/supabase.js';
+import { authenticateToken, requireRole } from '../middleware/auth.js';
 
 const router = express.Router();
 
@@ -361,4 +361,4 @@ router.get('/needs', authenticateToken, requireRole(['admin']), async (req, res)
   }
 });
 
-module.exports = router;
+export default router;

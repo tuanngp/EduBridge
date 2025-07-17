@@ -1,5 +1,5 @@
-const jwt = require('jsonwebtoken');
-const supabase = require('../config/supabase');
+import jwt from 'jsonwebtoken';
+import supabase from '../config/supabase.js';
 
 const authenticateToken = async (req, res, next) => {
   const authHeader = req.headers['authorization'];
@@ -51,4 +51,4 @@ const requireVerified = (req, res, next) => {
   next();
 };
 
-module.exports = { authenticateToken, requireRole, requireVerified };
+export { authenticateToken, requireRole, requireVerified };

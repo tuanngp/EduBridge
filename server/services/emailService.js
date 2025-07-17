@@ -1,4 +1,4 @@
-const nodemailer = require('nodemailer');
+import nodemailer from 'nodemailer';
 
 // Create transporter
 const transporter = nodemailer.createTransporter({
@@ -69,7 +69,7 @@ const sendNotificationEmail = async (email, subject, message) => {
   await transporter.sendMail(mailOptions);
 };
 
-module.exports = {
+export {
   sendVerificationEmail,
   sendNotificationEmail
 };
