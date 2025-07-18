@@ -1,10 +1,17 @@
 import express from 'express';
 import bcrypt from 'bcryptjs';
-import jwt from 'jsonwebtoken';
 import { v4 as uuidv4 } from 'uuid';
 import supabase from '../config/supabase.js';
 import { authenticateToken } from '../middleware/auth.js';
 import { sendVerificationEmail } from '../services/emailService.js';
+import { 
+  generateTokens, 
+  storeRefreshToken, 
+  refreshAccessToken, 
+  invalidateRefreshToken,
+  invalidateAllUserTokens,
+  validateCredentials
+} from '../services/authService.js';
 
 const router = express.Router();
 
@@ -73,25 +80,27 @@ router.post('/register', async (req, res) => {
     }
 
     // Generate tokens
-    const accessToken = jwt.sign(
-      { userId: user.id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: '15m' }
-    );
-
-    const refreshToken = jwt.sign(
-      { userId: user.id },
-      process.env.JWT_REFRESH_SECRET,
-      { expiresIn: '7d' }
-    );
+    const tokens = generateTokens(user);
+    
+    // Store refresh token
+    try {
+      await storeRefreshToken(
+        user.id, 
+        tokens.refreshToken, 
+        req.headers['user-agent'] || 'unknown', 
+        req.ip
+      );
+    } catch (tokenError) {
+      console.error('Token storage error:', tokenError);
+      // Continue even if token storage fails
+    }
 
     // Remove sensitive data
     const { password: _, verification_token: __, ...userResponse } = user;
 
     res.status(201).json({
       user: userResponse,
-      accessToken,
-      refreshToken,
+      ...tokens,
       message: 'Registration successful. Please check your email for verification.'
     });
   } catch (error) {
@@ -109,44 +118,31 @@ router.post('/login', async (req, res) => {
       return res.status(400).json({ error: 'Email and password are required' });
     }
 
-    // Find user
-    const { data: user, error } = await supabase
-      .from('users')
-      .select('*')
-      .eq('email', email)
-      .single();
+    try {
+      // Validate credentials
+      const user = await validateCredentials(email, password);
+      
+      // Generate tokens
+      const tokens = generateTokens(user);
+      
+      // Store refresh token with device info
+      await storeRefreshToken(
+        user.id, 
+        tokens.refreshToken, 
+        req.headers['user-agent'] || 'unknown', 
+        req.ip
+      );
 
-    if (error || !user) {
-      return res.status(401).json({ error: 'Invalid credentials' });
+      // Remove sensitive data
+      const { password: _, verification_token: __, ...userResponse } = user;
+
+      res.json({
+        user: userResponse,
+        ...tokens
+      });
+    } catch (authError) {
+      return res.status(401).json({ error: authError.message });
     }
-
-    // Check password
-    const isValidPassword = await bcrypt.compare(password, user.password);
-    if (!isValidPassword) {
-      return res.status(401).json({ error: 'Invalid credentials' });
-    }
-
-    // Generate tokens
-    const accessToken = jwt.sign(
-      { userId: user.id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: '15m' }
-    );
-
-    const refreshToken = jwt.sign(
-      { userId: user.id },
-      process.env.JWT_REFRESH_SECRET,
-      { expiresIn: '7d' }
-    );
-
-    // Remove sensitive data
-    const { password: _, verification_token: __, ...userResponse } = user;
-
-    res.json({
-      user: userResponse,
-      accessToken,
-      refreshToken
-    });
   } catch (error) {
     console.error('Login error:', error);
     res.status(500).json({ error: 'Internal server error' });
@@ -202,28 +198,16 @@ router.post('/refresh', async (req, res) => {
       return res.status(401).json({ error: 'Refresh token required' });
     }
 
-    const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
-
-    // Generate new access token
-    const { data: user } = await supabase
-      .from('users')
-      .select('id, role')
-      .eq('id', decoded.userId)
-      .single();
-
-    if (!user) {
-      return res.status(401).json({ error: 'Invalid refresh token' });
+    try {
+      // Use the refreshAccessToken service to generate a new access token
+      const tokens = await refreshAccessToken(refreshToken);
+      res.json(tokens);
+    } catch (error) {
+      return res.status(403).json({ error: error.message || 'Invalid refresh token' });
     }
-
-    const accessToken = jwt.sign(
-      { userId: user.id, role: user.role },
-      process.env.JWT_SECRET,
-      { expiresIn: '15m' }
-    );
-
-    res.json({ accessToken });
   } catch (error) {
-    res.status(403).json({ error: 'Invalid refresh token' });
+    console.error('Token refresh error:', error);
+    res.status(500).json({ error: 'Internal server error' });
   }
 });
 
@@ -239,9 +223,81 @@ router.get('/me', authenticateToken, async (req, res) => {
 });
 
 // Logout
-router.post('/logout', authenticateToken, (req, res) => {
-  // In a production app, you might want to blacklist the token
-  res.json({ message: 'Logged out successfully' });
+router.post('/logout', authenticateToken, async (req, res) => {
+  try {
+    const { refreshToken } = req.body;
+    
+    if (refreshToken) {
+      // Invalidate the specific refresh token
+      await invalidateRefreshToken(refreshToken);
+    }
+    
+    res.json({ message: 'Logged out successfully' });
+  } catch (error) {
+    console.error('Logout error:', error);
+    res.status(500).json({ error: 'Failed to logout' });
+  }
+});
+
+// Change password
+router.post('/change-password', authenticateToken, async (req, res) => {
+  try {
+    const { currentPassword, newPassword } = req.body;
+    const userId = req.user.id;
+
+    // Validation
+    if (!currentPassword || !newPassword) {
+      return res.status(400).json({ error: 'Current password and new password are required' });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ error: 'New password must be at least 6 characters' });
+    }
+
+    // Verify current password
+    const isValidPassword = await bcrypt.compare(currentPassword, req.user.password);
+    if (!isValidPassword) {
+      return res.status(401).json({ error: 'Current password is incorrect' });
+    }
+
+    // Hash new password
+    const hashedPassword = await bcrypt.hash(newPassword, 12);
+
+    // Update password in database
+    const { error: updateError } = await supabase
+      .from('users')
+      .update({
+        password: hashedPassword,
+        updated_at: new Date().toISOString()
+      })
+      .eq('id', userId);
+
+    if (updateError) {
+      return res.status(500).json({ error: 'Failed to update password' });
+    }
+
+    // Invalidate all refresh tokens for this user (requirement 1.4)
+    await invalidateAllUserTokens(userId);
+
+    // Generate new tokens
+    const tokens = generateTokens(req.user);
+    
+    // Store new refresh token
+    await storeRefreshToken(
+      userId, 
+      tokens.refreshToken, 
+      req.headers['user-agent'] || 'unknown', 
+      req.ip
+    );
+
+    res.json({
+      message: 'Password changed successfully. All other sessions have been logged out.',
+      ...tokens
+    });
+  } catch (error) {
+    console.error('Password change error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
 });
 
 export default router;
