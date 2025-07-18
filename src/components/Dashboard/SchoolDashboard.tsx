@@ -3,7 +3,7 @@ import { Plus, BookOpen, Clock, CheckCircle, Edit3, Package } from 'lucide-react
 import { useAuth } from '../../contexts/AuthContext';
 import { School, Request, Donation } from '../../types';
 import { getSchoolByUserId, saveSchool, getRequestsBySchoolId, saveRequest, getDonations, generateId } from '../../utils/storage';
-import RequestForm from './RequestForm';
+import EnhancedRequestForm from './EnhancedRequestForm';
 
 const SchoolDashboard: React.FC = () => {
   const { user } = useAuth();
@@ -332,7 +332,7 @@ const SchoolDashboard: React.FC = () => {
 
       {/* Request Form Modal */}
       {showRequestForm && (
-        <RequestForm
+        <EnhancedRequestForm
           onSubmit={handleRequestSubmit}
           onClose={() => setShowRequestForm(false)}
         />

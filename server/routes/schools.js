@@ -98,7 +98,7 @@ router.get('/profile', authenticateToken, requireRole(['school']), async (req, r
 // Create device need/request
 router.post('/needs', authenticateToken, requireRole(['school']), requireVerified, async (req, res) => {
   try {
-    const { device_type, quantity, description, priority } = req.body;
+    const { device_type, quantity, description, priority, specifications, min_condition } = req.body;
 
     if (!device_type || !quantity || !description) {
       return res.status(400).json({ error: 'Device type, quantity, and description are required' });
@@ -114,6 +114,7 @@ router.post('/needs', authenticateToken, requireRole(['school']), requireVerifie
       return res.status(404).json({ error: 'School profile not found' });
     }
 
+    // Create the need
     const { data: need, error } = await supabase
       .from('needs')
       .insert([{
@@ -122,6 +123,8 @@ router.post('/needs', authenticateToken, requireRole(['school']), requireVerifie
         device_type,
         quantity,
         description,
+        specifications: specifications || {},
+        min_condition: min_condition || null,
         priority: priority || 'medium',
         status: 'pending',
         created_at: new Date().toISOString()
@@ -133,7 +136,15 @@ router.post('/needs', authenticateToken, requireRole(['school']), requireVerifie
       return res.status(500).json({ error: 'Failed to create need' });
     }
 
-    res.status(201).json({ need });
+    // Find matching devices for the new need
+    // Import the service dynamically to avoid circular dependencies
+    const { findMatchingDevices } = await import('../services/deviceSuggestionService.js');
+    const matchingDevices = await findMatchingDevices(need, 5);
+
+    res.status(201).json({ 
+      need,
+      matchingDevices
+    });
   } catch (error) {
     console.error('Create need error:', error);
     res.status(500).json({ error: 'Internal server error' });

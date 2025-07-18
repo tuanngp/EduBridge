@@ -14,6 +14,7 @@ import uploadRoutes from "./routes/upload.js";
 import suggestionRoutes from "./routes/suggestions.js";
 import deviceHistoryRoutes from "./routes/deviceHistory.js";
 import schoolSuggestionRoutes from "./routes/schoolSuggestions.js";
+import deviceSuggestionRoutes from "./routes/deviceSuggestions.js";
 import voucherRoutes from "./routes/vouchers.js";
 
 const app = express();
@@ -53,6 +54,7 @@ app.use("/api/upload", uploadRoutes);
 app.use("/api/suggestions", suggestionRoutes);
 app.use("/api/device-history", deviceHistoryRoutes);
 app.use("/api/school-suggestions", schoolSuggestionRoutes);
+app.use("/api/device-suggestions", deviceSuggestionRoutes);
 app.use("/api/vouchers", voucherRoutes);
 
 // Health check
