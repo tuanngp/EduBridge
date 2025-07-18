@@ -204,6 +204,81 @@ export const findMatchingDevices = async (need, limit = 10) => {
 };
 
 /**
+ * Get detailed status information for a need
+ * @param {String} needId - Need ID
+ * @returns {Object} - Need with detailed status information
+ */
+export const getNeedStatusDetails = async (needId) => {
+    try {
+        // Get need with status history
+        const { data: need, error } = await supabase
+            .from('needs')
+            .select(`
+                *,
+                status_history:need_status_history(
+                    status,
+                    created_at
+                ),
+                matched_device:devices(
+                    id,
+                    name,
+                    device_type,
+                    condition,
+                    donor:users!inner(
+                        name,
+                        organization
+                    )
+                )
+            `)
+            .eq('id', needId)
+            .single();
+
+        if (error || !need) {
+            console.error('Error fetching need status details:', error);
+            return null;
+        }
+
+        // Process status timestamps
+        let matched_at = null;
+        let in_transit_at = null;
+        let delivered_at = null;
+        let completed_at = null;
+
+        if (need.status_history && need.status_history.length > 0) {
+            // Sort by created_at
+            const sortedHistory = [...need.status_history].sort((a, b) => 
+                new Date(a.created_at) - new Date(b.created_at)
+            );
+
+            // Find timestamps for each status
+            for (const entry of sortedHistory) {
+                if (entry.status === 'matched' && !matched_at) {
+                    matched_at = entry.created_at;
+                } else if (entry.status === 'in-transit' && !in_transit_at) {
+                    in_transit_at = entry.created_at;
+                } else if (entry.status === 'delivered' && !delivered_at) {
+                    delivered_at = entry.created_at;
+                } else if (entry.status === 'completed' && !completed_at) {
+                    completed_at = entry.created_at;
+                }
+            }
+        }
+
+        // Return need with status timestamps
+        return {
+            ...need,
+            matched_at,
+            in_transit_at,
+            delivered_at,
+            completed_at
+        };
+    } catch (error) {
+        console.error('Error getting need status details:', error);
+        return null;
+    }
+};
+
+/**
  * Find devices that match a school's needs
  * @param {String} schoolId - School ID
  * @param {Number} limit - Maximum number of suggestions per need

@@ -181,6 +181,49 @@ router.get('/needs', authenticateToken, requireRole(['school']), async (req, res
   }
 });
 
+// Get detailed status information for a specific need
+router.get('/needs/:needId', authenticateToken, requireRole(['school']), async (req, res) => {
+  try {
+    const { needId } = req.params;
+    
+    // Verify school owns this need
+    const { data: school } = await supabase
+      .from('schools')
+      .select('id')
+      .eq('user_id', req.user.id)
+      .single();
+
+    if (!school) {
+      return res.status(404).json({ error: 'School profile not found' });
+    }
+
+    // Verify need belongs to school
+    const { data: needCheck, error: needCheckError } = await supabase
+      .from('needs')
+      .select('id')
+      .eq('id', needId)
+      .eq('school_id', school.id)
+      .single();
+
+    if (needCheckError || !needCheck) {
+      return res.status(404).json({ error: 'Need not found or access denied' });
+    }
+
+    // Import the service dynamically to avoid circular dependencies
+    const { getNeedStatusDetails } = await import('../services/deviceSuggestionService.js');
+    const need = await getNeedStatusDetails(needId);
+
+    if (!need) {
+      return res.status(404).json({ error: 'Need details not found' });
+    }
+
+    res.json({ need });
+  } catch (error) {
+    console.error('Get need details error:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Get available devices
 router.get('/available-devices', authenticateToken, requireRole(['school']), requireVerified, async (req, res) => {
   try {
