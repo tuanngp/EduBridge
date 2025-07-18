@@ -11,6 +11,8 @@ import deviceRoutes from "./routes/devices.js";
 import transferRoutes from "./routes/transfers.js";
 import adminRoutes from "./routes/admin.js";
 import uploadRoutes from "./routes/upload.js";
+import suggestionRoutes from "./routes/suggestions.js";
+import deviceHistoryRoutes from "./routes/deviceHistory.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -46,6 +48,8 @@ app.use("/api/devices", deviceRoutes);
 app.use("/api/transfers", transferRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/upload", uploadRoutes);
+app.use("/api/suggestions", suggestionRoutes);
+app.use("/api/device-history", deviceHistoryRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {

@@ -730,6 +730,14 @@ class ApiService {
     
     return this.request<{ needs: any[] }>(endpoint);
   }
+  
+  // Device suggestion methods
+  async getDeviceSuggestions(description: string) {
+    return this.request<{ suggestion: any }>('/suggestions/device', {
+      method: 'POST',
+      body: JSON.stringify({ description }),
+    });
+  }
 
   private async handleUploadAuth(url: string, body: FormData): Promise<Response> {
     try {

@@ -1,6 +1,9 @@
-import React, { useState } from 'react';
-import { X } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { X, Clock } from 'lucide-react';
 import ImagePreviewModal from '../common/ImagePreviewModal';
+import DeviceStatusBadge from '../common/DeviceStatusBadge';
+import DeviceHistoryTimeline, { DeviceHistoryItem } from '../common/DeviceHistoryTimeline';
+import { fetchDeviceHistory, subscribeToDeviceHistory } from '../../services/deviceHistoryService';
 
 interface DeviceDetailProps {
   device: {
@@ -20,6 +23,25 @@ interface DeviceDetailProps {
 const DeviceDetail: React.FC<DeviceDetailProps> = ({ device, onClose }) => {
   const [previewModalOpen, setPreviewModalOpen] = useState(false);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const [deviceHistory, setDeviceHistory] = useState<DeviceHistoryItem[]>([]);
+  const [isLoadingHistory, setIsLoadingHistory] = useState(true);
+  const [activeTab, setActiveTab] = useState<'details' | 'history'>('details');
+
+  // Fetch device history and subscribe to real-time updates
+  useEffect(() => {
+    setIsLoadingHistory(true);
+    
+    // Subscribe to real-time updates
+    const unsubscribe = subscribeToDeviceHistory(device.id, (history) => {
+      setDeviceHistory(history);
+      setIsLoadingHistory(false);
+    });
+    
+    // Cleanup subscription on component unmount
+    return () => {
+      unsubscribe();
+    };
+  }, [device.id]);
 
   const openImagePreview = (index: number) => {
     setCurrentImageIndex(index);
@@ -55,24 +77,7 @@ const DeviceDetail: React.FC<DeviceDetailProps> = ({ device, onClose }) => {
     }).format(date);
   };
 
-  const getStatusBadgeClass = (status: string) => {
-    switch (status) {
-      case 'pending':
-        return 'bg-yellow-100 text-yellow-800';
-      case 'approved':
-        return 'bg-green-100 text-green-800';
-      case 'rejected':
-        return 'bg-red-100 text-red-800';
-      case 'reserved':
-        return 'bg-blue-100 text-blue-800';
-      case 'in-transit':
-        return 'bg-purple-100 text-purple-800';
-      case 'delivered':
-        return 'bg-teal-100 text-teal-800';
-      default:
-        return 'bg-gray-100 text-gray-800';
-    }
-  };
+  // Status badge is now handled by the DeviceStatusBadge component
 
   return (
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
@@ -87,7 +92,34 @@ const DeviceDetail: React.FC<DeviceDetailProps> = ({ device, onClose }) => {
           </button>
         </div>
 
-        <div className="p-6">
+        {/* Tab Navigation */}
+        <div className="border-b border-gray-200">
+          <nav className="flex -mb-px">
+            <button
+              onClick={() => setActiveTab('details')}
+              className={`py-4 px-6 text-center border-b-2 font-medium text-sm ${
+                activeTab === 'details'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Chi tiết thiết bị
+            </button>
+            <button
+              onClick={() => setActiveTab('history')}
+              className={`py-4 px-6 text-center border-b-2 font-medium text-sm ${
+                activeTab === 'history'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Lịch sử thiết bị
+            </button>
+          </nav>
+        </div>
+
+        {/* Details Tab Content */}
+        <div className={`p-6 ${activeTab !== 'details' ? 'hidden' : ''}`}>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {/* Images Section */}
             <div>
@@ -129,9 +161,7 @@ const DeviceDetail: React.FC<DeviceDetailProps> = ({ device, onClose }) => {
             {/* Details Section */}
             <div>
               <div className="mb-6">
-                <span className={`inline-block px-3 py-1 rounded-full text-sm font-medium ${getStatusBadgeClass(device.status)}`}>
-                  {device.status.charAt(0).toUpperCase() + device.status.slice(1)}
-                </span>
+                <DeviceStatusBadge status={device.status} size="lg" />
               </div>
 
               <div className="space-y-4">
@@ -162,6 +192,25 @@ const DeviceDetail: React.FC<DeviceDetailProps> = ({ device, onClose }) => {
               </div>
             </div>
           </div>
+        </div>
+
+        {/* History Tab Content */}
+        <div className={`p-6 ${activeTab !== 'history' ? 'hidden' : ''}`}>
+          <div className="mb-4 flex items-center">
+            <Clock className="h-5 w-5 text-gray-500 mr-2" />
+            <h3 className="text-lg font-medium text-gray-900">Lịch sử thiết bị</h3>
+          </div>
+          
+          <DeviceHistoryTimeline 
+            history={deviceHistory} 
+            isLoading={isLoadingHistory} 
+          />
+          
+          {!isLoadingHistory && deviceHistory.length === 0 && (
+            <div className="text-center py-8">
+              <p className="text-gray-500">Chưa có lịch sử cho thiết bị này</p>
+            </div>
+          )}
         </div>
 
         <div className="p-6 border-t border-gray-200">
