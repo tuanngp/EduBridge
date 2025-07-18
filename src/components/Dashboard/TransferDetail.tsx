@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import { Truck, Package, School, Calendar, FileText, QrCode } from 'lucide-react';
+import { Truck, Package, School, Calendar, FileText, QrCode, CheckSquare } from 'lucide-react';
 import TransferVoucher from '../common/TransferVoucher';
 import VoucherVerification from '../common/VoucherVerification';
+import DeviceReceiptConfirmation from './DeviceReceiptConfirmation';
 import api from '../../services/api';
 
 interface TransferDetailProps {
@@ -46,6 +47,7 @@ const TransferDetail: React.FC<TransferDetailProps> = ({ transferId, userRole })
   const [error, setError] = useState<string | null>(null);
   const [showVoucher, setShowVoucher] = useState<boolean>(false);
   const [showVerification, setShowVerification] = useState<boolean>(false);
+  const [showReceiptConfirmation, setShowReceiptConfirmation] = useState<boolean>(false);
 
   useEffect(() => {
     const fetchTransfer = async () => {
@@ -186,6 +188,22 @@ const TransferDetail: React.FC<TransferDetailProps> = ({ transferId, userRole })
                 <p className="mt-1 text-gray-700">{transfer.notes}</p>
               </div>
             )}
+            
+            {transfer.status === 'received' && transfer.received_images && transfer.received_images.length > 0 && (
+              <div className="mt-4 border-t border-gray-200 pt-4">
+                <p className="font-medium mb-2">Hình ảnh xác nhận đã nhận:</p>
+                <div className="flex flex-wrap gap-2">
+                  {transfer.received_images.map((image, index) => (
+                    <img
+                      key={index}
+                      src={image}
+                      alt={`Xác nhận nhận thiết bị ${index + 1}`}
+                      className="w-24 h-24 object-cover rounded-md"
+                    />
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
@@ -209,6 +227,16 @@ const TransferDetail: React.FC<TransferDetailProps> = ({ transferId, userRole })
               {showVerification ? 'Ẩn xác thực phiếu' : 'Xác thực phiếu vận chuyển'}
             </button>
           )}
+          
+          {(userRole === 'school') && transfer.status === 'delivered' && (
+            <button
+              onClick={() => setShowReceiptConfirmation(!showReceiptConfirmation)}
+              className="flex items-center bg-green-600 text-white px-4 py-2 rounded-md hover:bg-green-700 transition-colors"
+            >
+              <CheckSquare className="mr-2" size={18} />
+              {showReceiptConfirmation ? 'Ẩn xác nhận' : 'Xác nhận đã nhận thiết bị'}
+            </button>
+          )}
         </div>
       </div>
 
@@ -221,6 +249,27 @@ const TransferDetail: React.FC<TransferDetailProps> = ({ transferId, userRole })
       {showVerification && (
         <div className="p-6 border-t border-gray-200">
           <VoucherVerification />
+        </div>
+      )}
+
+      {showReceiptConfirmation && (
+        <div className="p-6 border-t border-gray-200">
+          <DeviceReceiptConfirmation 
+            transferId={transferId} 
+            onConfirmationComplete={() => {
+              setShowReceiptConfirmation(false);
+              // Refresh transfer data to show updated status
+              const fetchTransfer = async () => {
+                try {
+                  const response = await api.get(`/transfers/${transferId}`);
+                  setTransfer(response.data.transfer);
+                } catch (err) {
+                  console.error('Error fetching transfer:', err);
+                }
+              };
+              fetchTransfer();
+            }}
+          />
         </div>
       )}
     </div>

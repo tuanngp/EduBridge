@@ -16,6 +16,7 @@ import deviceHistoryRoutes from "./routes/deviceHistory.js";
 import schoolSuggestionRoutes from "./routes/schoolSuggestions.js";
 import deviceSuggestionRoutes from "./routes/deviceSuggestions.js";
 import voucherRoutes from "./routes/vouchers.js";
+import deviceReceiptRoutes from "./routes/deviceReceipt.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -56,6 +57,7 @@ app.use("/api/device-history", deviceHistoryRoutes);
 app.use("/api/school-suggestions", schoolSuggestionRoutes);
 app.use("/api/device-suggestions", deviceSuggestionRoutes);
 app.use("/api/vouchers", voucherRoutes);
+app.use("/api/device-receipts", deviceReceiptRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {
