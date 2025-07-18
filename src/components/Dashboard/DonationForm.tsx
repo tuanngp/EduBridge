@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { X } from 'lucide-react';
+import ImageUploader from '../common/ImageUploader';
+import apiService from '../../services/api';
 
 interface DonationFormProps {
   onSubmit: (data: any) => void;
@@ -14,6 +16,9 @@ const DonationForm: React.FC<DonationFormProps> = ({ onSubmit, onClose }) => {
     condition: 'new',
     quantity: '1',
   });
+  const [imageFiles, setImageFiles] = useState<File[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadError, setUploadError] = useState<string | null>(null);
 
   const deviceTypes = [
     'Laptop',
@@ -29,9 +34,37 @@ const DonationForm: React.FC<DonationFormProps> = ({ onSubmit, onClose }) => {
     'Other',
   ];
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    onSubmit(formData);
+    
+    try {
+      setIsUploading(true);
+      setUploadError(null);
+      
+      let imageUrls: string[] = [];
+      
+      // Upload images if there are any
+      if (imageFiles.length > 0) {
+        const response = await apiService.uploadImages(imageFiles, 'devices');
+        if (response.data && response.data.urls) {
+          imageUrls = response.data.urls;
+        } else {
+          throw new Error('Failed to upload images');
+        }
+      }
+      
+      // Submit form data with image URLs
+      onSubmit({
+        ...formData,
+        images: imageUrls,
+        device_type: formData.deviceType, // Map to API expected format
+      });
+    } catch (error) {
+      console.error('Error uploading images:', error);
+      setUploadError(error instanceof Error ? error.message : 'Failed to upload images');
+    } finally {
+      setIsUploading(false);
+    }
   };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) => {
@@ -140,19 +173,34 @@ const DonationForm: React.FC<DonationFormProps> = ({ onSubmit, onClose }) => {
             />
           </div>
 
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Device Images
+            </label>
+            <ImageUploader 
+              onImagesChange={setImageFiles} 
+              maxImages={5}
+            />
+            {uploadError && (
+              <p className="mt-2 text-sm text-red-600">{uploadError}</p>
+            )}
+          </div>
+
           <div className="flex space-x-4 pt-4">
             <button
               type="button"
               onClick={onClose}
               className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-all duration-200"
+              disabled={isUploading}
             >
               Cancel
             </button>
             <button
               type="submit"
               className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl"
+              disabled={isUploading}
             >
-              Submit Donation
+              {isUploading ? 'Uploading...' : 'Submit Donation'}
             </button>
           </div>
         </form>

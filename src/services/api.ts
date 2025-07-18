@@ -524,9 +524,15 @@ class ApiService {
     quantity: number;
     images?: string[];
   }) {
+    // Ensure images is always an array
+    const dataToSend = {
+      ...deviceData,
+      images: deviceData.images || []
+    };
+    
     return this.request<{ device: any }>('/devices', {
       method: 'POST',
-      body: JSON.stringify(deviceData),
+      body: JSON.stringify(dataToSend),
     });
   }
 
@@ -807,7 +813,17 @@ class ApiService {
         throw new Error(error.error || 'Upload failed');
       }
 
-      return response.json();
+      const result = await response.json();
+      
+      // Transform the response to match our expected format
+      // The server returns { images: [{ url, public_id, width, height }, ...] }
+      // We want to return { data: { urls: [url1, url2, ...] } }
+      if (result.images && Array.isArray(result.images)) {
+        const urls = result.images.map(img => img.url);
+        return { data: { urls } };
+      }
+      
+      return result;
     } catch (error) {
       if (error instanceof TypeError && error.message.includes('fetch')) {
         throw new Error('Network connection failed');
