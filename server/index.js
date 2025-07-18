@@ -13,6 +13,7 @@ import adminRoutes from "./routes/admin.js";
 import uploadRoutes from "./routes/upload.js";
 import suggestionRoutes from "./routes/suggestions.js";
 import deviceHistoryRoutes from "./routes/deviceHistory.js";
+import schoolSuggestionRoutes from "./routes/schoolSuggestions.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -50,6 +51,7 @@ app.use("/api/admin", adminRoutes);
 app.use("/api/upload", uploadRoutes);
 app.use("/api/suggestions", suggestionRoutes);
 app.use("/api/device-history", deviceHistoryRoutes);
+app.use("/api/school-suggestions", schoolSuggestionRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {

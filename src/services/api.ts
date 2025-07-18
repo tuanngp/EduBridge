@@ -738,6 +738,19 @@ class ApiService {
       body: JSON.stringify({ description }),
     });
   }
+  
+  // School suggestion methods
+  async getSchoolSuggestions(deviceId: string, limit?: number) {
+    const params = new URLSearchParams();
+    if (limit) params.append('limit', limit.toString());
+    
+    const queryString = params.toString();
+    const endpoint = queryString 
+      ? `/school-suggestions/device/${deviceId}?${queryString}` 
+      : `/school-suggestions/device/${deviceId}`;
+    
+    return this.request<{ suggestedSchools: any[] }>(endpoint);
+  }
 
   private async handleUploadAuth(url: string, body: FormData): Promise<Response> {
     try {

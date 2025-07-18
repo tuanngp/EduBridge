@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { X, Clock } from 'lucide-react';
+import { X, Clock, School } from 'lucide-react';
 import ImagePreviewModal from '../common/ImagePreviewModal';
 import DeviceStatusBadge from '../common/DeviceStatusBadge';
 import DeviceHistoryTimeline, { DeviceHistoryItem } from '../common/DeviceHistoryTimeline';
+import SchoolSuggestionList from '../common/SchoolSuggestionList';
 import { fetchDeviceHistory, subscribeToDeviceHistory } from '../../services/deviceHistoryService';
 
 interface DeviceDetailProps {
@@ -25,7 +26,7 @@ const DeviceDetail: React.FC<DeviceDetailProps> = ({ device, onClose }) => {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [deviceHistory, setDeviceHistory] = useState<DeviceHistoryItem[]>([]);
   const [isLoadingHistory, setIsLoadingHistory] = useState(true);
-  const [activeTab, setActiveTab] = useState<'details' | 'history'>('details');
+  const [activeTab, setActiveTab] = useState<'details' | 'history' | 'suggestions'>('details');
 
   // Fetch device history and subscribe to real-time updates
   useEffect(() => {
@@ -114,6 +115,16 @@ const DeviceDetail: React.FC<DeviceDetailProps> = ({ device, onClose }) => {
               }`}
             >
               Lịch sử thiết bị
+            </button>
+            <button
+              onClick={() => setActiveTab('suggestions')}
+              className={`py-4 px-6 text-center border-b-2 font-medium text-sm ${
+                activeTab === 'suggestions'
+                  ? 'border-blue-500 text-blue-600'
+                  : 'border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300'
+              }`}
+            >
+              Trường học phù hợp
             </button>
           </nav>
         </div>
@@ -209,6 +220,29 @@ const DeviceDetail: React.FC<DeviceDetailProps> = ({ device, onClose }) => {
           {!isLoadingHistory && deviceHistory.length === 0 && (
             <div className="text-center py-8">
               <p className="text-gray-500">Chưa có lịch sử cho thiết bị này</p>
+            </div>
+          )}
+        </div>
+
+        {/* School Suggestions Tab Content */}
+        <div className={`p-6 ${activeTab !== 'suggestions' ? 'hidden' : ''}`}>
+          <div className="mb-4 flex items-center">
+            <School className="h-5 w-5 text-gray-500 mr-2" />
+            <h3 className="text-lg font-medium text-gray-900">Trường học phù hợp</h3>
+          </div>
+          
+          {device.status === 'approved' ? (
+            <SchoolSuggestionList 
+              deviceId={device.id} 
+              onSelectSchool={(schoolId) => {
+                // This will be implemented in the transfer flow
+                console.log(`Selected school: ${schoolId}`);
+                // Here we would typically open a transfer dialog or redirect to transfer page
+              }}
+            />
+          ) : (
+            <div className="bg-yellow-50 border border-yellow-200 rounded-lg p-4 text-yellow-700">
+              Thiết bị cần được phê duyệt trước khi có thể gợi ý trường học phù hợp.
             </div>
           )}
         </div>
