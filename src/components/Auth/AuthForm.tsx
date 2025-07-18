@@ -18,10 +18,12 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onSubmit, onModeChange, loadi
   });
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
+  const [success, setSuccess] = useState('');
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setError('');
+    setSuccess('');
 
     if (mode === 'register' && !formData.name.trim()) {
       setError('Name is required');
@@ -38,17 +40,26 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onSubmit, onModeChange, loadi
       return;
     }
 
-    const success = mode === 'login' 
-      ? await onSubmit({ email: formData.email, password: formData.password })
-      : await onSubmit({ 
-          email: formData.email, 
-          password: formData.password, 
-          name: formData.name, 
-          role: formData.role 
-        });
+    try {
+      console.log(`Attempting to ${mode === 'login' ? 'login' : 'register'}...`);
+      const success = mode === 'login' 
+        ? await onSubmit({ email: formData.email, password: formData.password })
+        : await onSubmit({ 
+            email: formData.email, 
+            password: formData.password, 
+            name: formData.name, 
+            role: formData.role 
+          });
 
-    if (!success) {
-      setError(mode === 'login' ? 'Invalid credentials' : 'Email already exists');
+      if (success) {
+        setSuccess(mode === 'login' ? 'Login successful! Redirecting...' : 'Registration successful! Redirecting...');
+        console.log('Authentication successful, waiting for redirect...');
+      } else {
+        setError(mode === 'login' ? 'Invalid credentials' : 'Email already exists');
+      }
+    } catch (err) {
+      console.error('Authentication error:', err);
+      setError('An unexpected error occurred. Please try again.');
     }
   };
 
@@ -58,6 +69,7 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onSubmit, onModeChange, loadi
       [e.target.name]: e.target.value,
     }));
     setError('');
+    setSuccess('');
   };
 
   return (
@@ -178,6 +190,12 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onSubmit, onModeChange, loadi
             {error && (
               <div className="text-red-600 text-sm text-center bg-red-50 py-2 px-3 rounded-lg">
                 {error}
+              </div>
+            )}
+
+            {success && (
+              <div className="text-green-600 text-sm text-center bg-green-50 py-2 px-3 rounded-lg">
+                {success}
               </div>
             )}
 
