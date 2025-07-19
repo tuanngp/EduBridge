@@ -739,6 +739,20 @@ class ApiService {
     });
   }
   
+  async previewDeviceSuggestions(deviceData: {
+    device_type: string;
+    quantity?: number;
+    description?: string;
+    specifications?: Record<string, string>;
+    min_condition?: string;
+    priority?: string;
+  }) {
+    return this.request<{ matchingDevices: any[] }>('/device-suggestions/preview', {
+      method: 'POST',
+      body: JSON.stringify(deviceData),
+    });
+  }
+  
   // School suggestion methods
   async getSchoolSuggestions(deviceId: string, limit?: number) {
     const params = new URLSearchParams();
