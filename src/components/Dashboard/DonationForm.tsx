@@ -831,19 +831,8 @@ const DonationForm: React.FC<DonationFormProps> = ({ onSubmit, onClose }) => {
               className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl"
               disabled={isUploading || isAnalyzing}
             >
-              {isUploading ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Đang tải lên...
-                </>
-              ) : isAnalyzing ? (
-                <>
-                  <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                  Đang phân tích...
-                </>
-              ) : (
-                'Xác nhận quyên góp'
-              )}
+              Xác nhận
+              {isUploading ? 'Uploading...' : 'Submit Donation'}
             </button>
           </div>
         </form>
