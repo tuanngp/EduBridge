@@ -1,1 +1,0 @@
-ALTER TABLE transfer_vouchers ENABLE ROW LEVEL SECURITY
