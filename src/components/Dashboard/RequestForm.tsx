@@ -15,16 +15,16 @@ const RequestForm: React.FC<RequestFormProps> = ({ onSubmit, onClose }) => {
 
   const deviceTypes = [
     'Laptop',
-    'Desktop Computer',
-    'Tablet',
-    'Smartphone',
-    'Monitor',
-    'Keyboard',
-    'Mouse',
-    'Printer',
-    'Projector',
+    'Máy tính bàn',
+    'Máy tính bảng',
+    'Điện thoại thông minh',
+    'Màn hình',
+    'Bàn phím',
+    'Chuột',
+    'Máy in',
+    'Máy chiếu',
     'Webcam',
-    'Other',
+    'Khác',
   ];
 
   const handleSubmit = (e: React.FormEvent) => {
@@ -43,7 +43,7 @@ const RequestForm: React.FC<RequestFormProps> = ({ onSubmit, onClose }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-screen overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-2xl font-bold text-gray-900">Submit Device Request</h2>
+          <h2 className="text-2xl font-bold text-gray-900">Gửi yêu cầu về thiết bị</h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 transition-colors duration-200"
@@ -55,7 +55,7 @@ const RequestForm: React.FC<RequestFormProps> = ({ onSubmit, onClose }) => {
         <form onSubmit={handleSubmit} className="p-6 space-y-6">
           <div>
             <label htmlFor="deviceType" className="block text-sm font-medium text-gray-700 mb-2">
-              Device Type *
+              Loại thiết bị *
             </label>
             <select
               id="deviceType"
@@ -74,7 +74,7 @@ const RequestForm: React.FC<RequestFormProps> = ({ onSubmit, onClose }) => {
 
           <div>
             <label htmlFor="quantity" className="block text-sm font-medium text-gray-700 mb-2">
-              Quantity Needed *
+              Số lượng cần *
             </label>
             <input
               id="quantity"
@@ -90,7 +90,7 @@ const RequestForm: React.FC<RequestFormProps> = ({ onSubmit, onClose }) => {
 
           <div>
             <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
-              Description *
+              Mô tả *
             </label>
             <textarea
               id="description"
@@ -110,13 +110,13 @@ const RequestForm: React.FC<RequestFormProps> = ({ onSubmit, onClose }) => {
               onClick={onClose}
               className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-all duration-200"
             >
-              Cancel
+              Hủy
             </button>
             <button
               type="submit"
               className="flex-1 bg-gradient-to-r from-green-600 to-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:from-green-700 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
             >
-              Submit Request
+              Gửi yêu cầu
             </button>
           </div>
         </form>
