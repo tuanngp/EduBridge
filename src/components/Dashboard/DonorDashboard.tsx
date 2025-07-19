@@ -132,11 +132,11 @@ const DonorDashboard: React.FC = () => {
     return (
       <div className="max-w-2xl mx-auto">
         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-8">
-          <h2 className="text-2xl font-bold text-gray-900 mb-6">Complete Your Donor Profile</h2>
+          <h2 className="text-2xl font-bold text-gray-900 mb-6">Hoàn thành hồ sơ của nhà tài trợ</h2>
           <form onSubmit={handleProfileSubmit} className="space-y-6">
             <div>
               <label htmlFor="organization" className="block text-sm font-medium text-gray-700 mb-2">
-                Organization Name
+                Tên tổ chức
               </label>
               <input
                 id="organization"
@@ -145,12 +145,12 @@ const DonorDashboard: React.FC = () => {
                 value={profileForm.organization}
                 onChange={(e) => setProfileForm(prev => ({ ...prev, organization: e.target.value }))}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                placeholder="Enter your organization name"
+                placeholder="Nhập tên tổ chức"
               />
             </div>
             <div>
               <label htmlFor="phone" className="block text-sm font-medium text-gray-700 mb-2">
-                Phone Number
+                Số điện thoại
               </label>
               <input
                 id="phone"
@@ -159,14 +159,14 @@ const DonorDashboard: React.FC = () => {
                 value={profileForm.phone}
                 onChange={(e) => setProfileForm(prev => ({ ...prev, phone: e.target.value }))}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                placeholder="Enter your phone number"
+                placeholder="Nhập số điện thoại"
               />
             </div>
             <button
               type="submit"
               className="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-6 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl"
             >
-              Save Profile
+              Lưu hồ sơ
             </button>
           </form>
         </div>
@@ -179,8 +179,8 @@ const DonorDashboard: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">Donor Dashboard</h1>
-          <p className="mt-2 text-gray-600">Manage your device donations and help schools in need</p>
+          <h1 className="text-3xl font-bold text-gray-900">Trang tổng quan về nhà tài trợ</h1>
+          <p className="mt-2 text-gray-600">Quản lý các khoản quyên góp thiết bị của bạn và giúp đỡ các trường học đang gặp khó khăn</p>
         </div>
         <div className="mt-4 md:mt-0 flex space-x-3">
           <button
@@ -188,14 +188,14 @@ const DonorDashboard: React.FC = () => {
             className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200"
           >
             <Edit3 className="h-4 w-4" />
-            <span>Edit Profile</span>
+            <span>Chỉnh sửa hồ sơ</span>
           </button>
           <button
             onClick={() => setShowDonationForm(true)}
             className="flex items-center space-x-2 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-2 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl"
           >
             <Plus className="h-4 w-4" />
-            <span>New Donation</span>
+            <span>Quyên góp</span>
           </button>
         </div>
       </div>
@@ -203,18 +203,18 @@ const DonorDashboard: React.FC = () => {
       {/* Profile Summary */}
       {donor && (
         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">Profile Information</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Thông tin hồ sơ</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <p className="text-sm text-gray-500">Organization</p>
+              <p className="text-sm text-gray-500">Tổ chức</p>
               <p className="font-medium text-gray-900">{donor.organization}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Contact</p>
+              <p className="text-sm text-gray-500">Liên hệ</p>
               <p className="font-medium text-gray-900">{donor.phone}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Total Donations</p>
+              <p className="text-sm text-gray-500">Tổng số quyên góp</p>
               <p className="font-medium text-gray-900">{donations.length}</p>
             </div>
           </div>
@@ -231,13 +231,13 @@ const DonorDashboard: React.FC = () => {
         ) : donations.length === 0 ? (
           <div className="text-center py-12">
             <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-            <h3 className="text-lg font-medium text-gray-900 mb-2">No donations yet</h3>
-            <p className="text-gray-500 mb-6">Start making a difference by submitting your first donation</p>
+            <h3 className="text-lg font-medium text-gray-900 mb-2">Chưa có khoản quyên góp nào</h3>
+            <p className="text-gray-500 mb-6">Hãy bắt đầu tạo nên sự khác biệt bằng cách gửi khoản quyên góp đầu tiên của bạn</p>
             <button
               onClick={() => setShowDonationForm(true)}
               className="bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl"
             >
-              Submit First Donation
+              Gửi khoản quyên góp đầu tiên
             </button>
           </div>
         ) : (
@@ -258,11 +258,11 @@ const DonorDashboard: React.FC = () => {
                     <span className="font-medium">{donation.device_type}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Condition:</span>
+                    <span className="text-gray-500">Tình trạng:</span>
                     <span className="font-medium">{donation.condition.replace('-', ' ')}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-gray-500">Quantity:</span>
+                    <span className="text-gray-500">Số lượng:</span>
                     <span className="font-medium">{donation.quantity}</span>
                   </div>
                   <div className="flex justify-between">

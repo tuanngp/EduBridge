@@ -160,7 +160,7 @@ const SchoolDashboard: React.FC = () => {
           <form onSubmit={handleProfileSubmit} className="space-y-6">
             <div>
               <label htmlFor="schoolName" className="block text-sm font-medium text-gray-700 mb-2">
-                School Name
+                Tên trường
               </label>
               <input
                 id="schoolName"
@@ -169,7 +169,7 @@ const SchoolDashboard: React.FC = () => {
                 value={profileForm.schoolName}
                 onChange={(e) => setProfileForm(prev => ({ ...prev, schoolName: e.target.value }))}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                placeholder="Enter your school name"
+                placeholder="Nhập tên trường của bạn"
               />
             </div>
             <div>
@@ -204,7 +204,7 @@ const SchoolDashboard: React.FC = () => {
               type="submit"
               className="w-full bg-gradient-to-r from-green-600 to-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:from-green-700 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
             >
-              Save Profile
+              Lưu hồ sơ
             </button>
           </form>
         </div>
@@ -217,8 +217,8 @@ const SchoolDashboard: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">School Dashboard</h1>
-          <p className="mt-2 text-gray-600">Manage your device requests and browse available donations</p>
+          <h1 className="text-3xl font-bold text-gray-900">Bảng thông tin trường học</h1>
+          <p className="mt-2 text-gray-600">Quản lý các yêu cầu về thiết bị của bạn và duyệt các khoản quyên góp có sẵn</p>
         </div>
         <div className="mt-4 md:mt-0 flex space-x-3">
           <button
@@ -226,14 +226,14 @@ const SchoolDashboard: React.FC = () => {
             className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200"
           >
             <Edit3 className="h-4 w-4" />
-            <span>Edit Profile</span>
+            <span>Chỉnh sửa hồ sơ</span>
           </button>
           <button
             onClick={() => setShowRequestForm(true)}
             className="flex items-center space-x-2 bg-gradient-to-r from-green-600 to-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:from-green-700 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
           >
             <Plus className="h-4 w-4" />
-            <span>New Request</span>
+            <span>Yêu cầu mới</span>
           </button>
         </div>
       </div>
@@ -241,7 +241,7 @@ const SchoolDashboard: React.FC = () => {
       {/* Profile Summary */}
       {school && (
         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">School Information</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Thông tin trường học</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
               <p className="text-sm text-gray-500">School Name</p>
@@ -252,7 +252,7 @@ const SchoolDashboard: React.FC = () => {
               <p className="font-medium text-gray-900">{school.address}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Total Requests</p>
+              <p className="text-sm text-gray-500">Tổng số yêu cầu</p>
               <p className="font-medium text-gray-900">{requests.length}</p>
             </div>
           </div>
@@ -272,7 +272,7 @@ const SchoolDashboard: React.FC = () => {
             >
               <div className="flex items-center space-x-2">
                 <BookOpen className="h-4 w-4" />
-                <span>My Requests</span>
+                <span>Yêu cầu của tôi</span>
               </div>
             </button>
             <button
@@ -284,7 +284,7 @@ const SchoolDashboard: React.FC = () => {
             >
               <div className="flex items-center space-x-2">
                 <Package className="h-4 w-4" />
-                <span>Available Donations</span>
+                <span>Khoản quyên góp sẵn có</span>
               </div>
             </button>
           </nav>

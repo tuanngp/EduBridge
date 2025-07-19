@@ -31,16 +31,16 @@ const DonationForm: React.FC<DonationFormProps> = ({ onSubmit, onClose }) => {
 
   const deviceTypes = [
     'Laptop',
-    'Desktop Computer',
-    'Tablet',
-    'Smartphone',
-    'Monitor',
-    'Keyboard',
-    'Mouse',
-    'Printer',
-    'Projector',
+    'Máy tính bàn',
+    'Máy tính bảng',
+    'Điện thoại thông minh',
+    'Màn hình',
+    'Bàn phím',
+    'Chuột',
+    'Máy in',
+    'Máy chiếu',
     'Webcam',
-    'Other',
+    'Khác',
   ];
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -210,7 +210,7 @@ const DonationForm: React.FC<DonationFormProps> = ({ onSubmit, onClose }) => {
     <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4 z-50">
       <div className="bg-white rounded-2xl shadow-xl max-w-2xl w-full max-h-screen overflow-y-auto">
         <div className="flex items-center justify-between p-6 border-b border-gray-200">
-          <h2 className="text-2xl font-bold text-gray-900">Submit New Donation</h2>
+          <h2 className="text-2xl font-bold text-gray-900">Gửi quyên góp</h2>
           <button
             onClick={onClose}
             className="text-gray-400 hover:text-gray-600 transition-colors duration-200"
@@ -248,7 +248,7 @@ const DonationForm: React.FC<DonationFormProps> = ({ onSubmit, onClose }) => {
               onChange={handleChange}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
             >
-              <option value="">Select device type</option>
+              <option value="">Chọn loại thiết bị</option>
               {deviceTypes.map(type => (
                 <option key={type} value={type}>{type}</option>
               ))}
@@ -267,9 +267,9 @@ const DonationForm: React.FC<DonationFormProps> = ({ onSubmit, onClose }) => {
               onChange={handleChange}
               className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
             >
-              <option value="new">New</option>
-              <option value="used-good">Used - Good condition</option>
-              <option value="used-fair">Used - Fair condition</option>
+              <option value="new">Mới</option>
+              <option value="used-good">Đã qua sử dụng - Tình trạng tốt</option>
+              <option value="used-fair">Đã qua sử dụng - Tình trạng khá</option>
             </select>
           </div>
 
@@ -291,18 +291,18 @@ const DonationForm: React.FC<DonationFormProps> = ({ onSubmit, onClose }) => {
 
           <div>
             <label htmlFor="description" className="block text-sm font-medium text-gray-700 mb-2">
-              Description *
+              Mô tả *
             </label>
             <div className="relative">
-              <textarea
-                id="description"
-                name="description"
-                required
-                rows={4}
-                value={formData.description}
-                onChange={handleChange}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                placeholder="Provide detailed information about the device, including specifications, accessories included, pickup location, etc."
+                         <textarea
+              id="description"
+              name="description"
+              required
+              rows={4}
+              value={formData.description}
+              onChange={handleChange}
+              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
+              placeholder="Cung cấp thông tin chi tiết về thiết bị, bao gồm thông số kỹ thuật, phụ kiện đi kèm, địa điểm nhận hàng, v.v."
               />
               {isSuggesting && (
                 <div className="absolute right-3 top-3 text-blue-500">
@@ -319,7 +319,7 @@ const DonationForm: React.FC<DonationFormProps> = ({ onSubmit, onClose }) => {
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center">
                     <Lightbulb className="h-5 w-5 text-blue-500 mr-2" />
-                    <span className="font-medium text-blue-700">We found some suggestions based on your description</span>
+                    <span className="font-medium text-blue-700">Chúng tôi đã tìm thấy một số gợi ý dựa trên mô tả của bạn</span>
                   </div>
                   <div className="flex space-x-2">
                     <button
@@ -327,14 +327,14 @@ const DonationForm: React.FC<DonationFormProps> = ({ onSubmit, onClose }) => {
                       onClick={applySuggestions}
                       className="px-3 py-1 bg-blue-500 text-white text-sm rounded-md hover:bg-blue-600 transition-colors"
                     >
-                      Apply
+                      Xác nhận
                     </button>
                     <button
                       type="button"
                       onClick={dismissSuggestions}
                       className="px-3 py-1 bg-gray-200 text-gray-700 text-sm rounded-md hover:bg-gray-300 transition-colors"
                     >
-                      Dismiss
+                      Đóng
                     </button>
                   </div>
                 </div>
@@ -342,18 +342,18 @@ const DonationForm: React.FC<DonationFormProps> = ({ onSubmit, onClose }) => {
                 <div className="space-y-1 text-sm">
                   {suggestions.deviceType && (
                     <div className="flex items-center">
-                      <span className="text-gray-600 w-24">Device Type:</span>
+                      <span className="text-gray-600 w-24">Loại thiết bị:</span>
                       <span className="font-medium">{suggestions.deviceType}</span>
                     </div>
                   )}
                   
                   {suggestions.condition && (
                     <div className="flex items-center">
-                      <span className="text-gray-600 w-24">Condition:</span>
+                      <span className="text-gray-600 w-24">Tình trạng:</span>
                       <span className="font-medium">
-                        {suggestions.condition === 'new' ? 'New' : 
-                         suggestions.condition === 'used-good' ? 'Used - Good condition' : 
-                         'Used - Fair condition'}
+                        {suggestions.condition === 'new' ? 'Mới' : 
+                         suggestions.condition === 'used-good' ? 'Đã qua sử dụng - Tình trạng tốt' : 
+                         'Đã qua sử dụng - Tình trạng khá'}
                       </span>
                     </div>
                   )}
@@ -378,7 +378,7 @@ const DonationForm: React.FC<DonationFormProps> = ({ onSubmit, onClose }) => {
 
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
-              Device Images
+              Hình ảnh thiết bị
             </label>
             <ImageUploader 
               onImagesChange={setImageFiles} 
@@ -396,13 +396,14 @@ const DonationForm: React.FC<DonationFormProps> = ({ onSubmit, onClose }) => {
               className="flex-1 px-6 py-3 border border-gray-300 text-gray-700 rounded-lg font-medium hover:bg-gray-50 transition-all duration-200"
               disabled={isUploading}
             >
-              Cancel
+              Hủy
             </button>
             <button
               type="submit"
               className="flex-1 bg-gradient-to-r from-blue-600 to-purple-600 text-white px-6 py-3 rounded-lg font-medium hover:from-blue-700 hover:to-purple-700 transition-all duration-200 shadow-lg hover:shadow-xl"
               disabled={isUploading}
             >
+              Xác nhận
               {isUploading ? 'Uploading...' : 'Submit Donation'}
             </button>
           </div>

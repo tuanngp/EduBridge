@@ -24,7 +24,7 @@ const Header: React.FC = () => {
             </div>
             <div>
               <h1 className="text-xl font-bold text-gray-900">EduBridge</h1>
-              <p className="text-xs text-gray-500">Connecting Learning Communities</p>
+              <p className="text-xs text-gray-500">Kết nối cộng đồng giáo dục</p>
             </div>
           </div>
 
@@ -44,7 +44,7 @@ const Header: React.FC = () => {
                 className="flex items-center space-x-1 px-3 py-2 text-sm text-gray-600 hover:text-red-600 transition-colors duration-200"
               >
                 <LogOut className="h-4 w-4" />
-                <span>Logout</span>
+                <span>Đăng xuất</span>
               </button>
             </div>
           )}
