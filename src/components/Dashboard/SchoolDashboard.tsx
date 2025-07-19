@@ -108,7 +108,7 @@ const SchoolDashboard: React.FC = () => {
       const newRequest: Need = {
         id: generateId(),
         school_id: school.id,
-        device_type: requestData.deviceType,
+        device_type: requestData.device_type || '',
         quantity: parseInt(requestData.quantity),
         description: requestData.description,
         status: 'pending',

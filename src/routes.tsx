@@ -78,7 +78,7 @@ const AppRoutes: React.FC = () => {
           path="/"
           element={
             !user ? (
-              <LandingPage onGetStarted={() => {}} />
+              <LandingPage onGetStarted={() => window.location.href = "/login"} />
             ) : (
               <Navigate to="/dashboard" replace />
             )
@@ -91,7 +91,7 @@ const AppRoutes: React.FC = () => {
               <AuthForm
                 mode="login"
                 onSubmit={handleLogin}
-                onModeChange={() => {}}
+                onModeChange={() => { }}
                 loading={loading}
               />
             ) : (
@@ -106,7 +106,7 @@ const AppRoutes: React.FC = () => {
               <AuthForm
                 mode="register"
                 onSubmit={handleRegister}
-                onModeChange={() => {}}
+                onModeChange={() => { }}
                 loading={loading}
               />
             ) : (
