@@ -1,16 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { Plus, Package, Clock, CheckCircle, Edit3 } from 'lucide-react';
 import { useAuth } from '../../contexts/AuthContext';
-import { Donor, Donation } from '../../types';
-import { getDonorByUserId, saveDonor, getDonationsByDonorId, saveDonation, generateId } from '../../utils/storage';
+import { Donor, Device } from '../../types';
+import { getDonorByUserId, saveDonor, getDonationsByDonorId, saveDonation, generateId } from '../../services/dataService';
 import DonationForm from './DonationForm';
 
 const DonorDashboard: React.FC = () => {
   const { user } = useAuth();
   const [donor, setDonor] = useState<Donor | null>(null);
-  const [donations, setDonations] = useState<Donation[]>([]);
+  const [donations, setDonations] = useState<Device[]>([]);
   const [showDonationForm, setShowDonationForm] = useState(false);
   const [showProfileForm, setShowProfileForm] = useState(false);
+  const [loading, setLoading] = useState(false);
   const [profileForm, setProfileForm] = useState({
     organization: '',
     phone: '',
@@ -18,61 +19,95 @@ const DonorDashboard: React.FC = () => {
 
   useEffect(() => {
     if (user) {
-      const existingDonor = getDonorByUserId(user.id);
+      loadUserData();
+    }
+  }, [user]);
+  
+  const loadUserData = async () => {
+    setLoading(true);
+    try {
+      const existingDonor = await getDonorByUserId(user!.id);
       if (existingDonor) {
         setDonor(existingDonor);
         setProfileForm({
           organization: existingDonor.organization,
           phone: existingDonor.phone,
         });
-        loadDonations(existingDonor.id);
+        await loadDonations(existingDonor.id);
       } else {
         setShowProfileForm(true);
       }
+    } catch (error) {
+      console.error('Error loading donor data:', error);
+    } finally {
+      setLoading(false);
     }
-  }, [user]);
-
-  const loadDonations = (donorId: string) => {
-    const donorDonations = getDonationsByDonorId(donorId);
-    setDonations(donorDonations);
   };
 
-  const handleProfileSubmit = (e: React.FormEvent) => {
+  const loadDonations = async (donorId: string) => {
+    try {
+      const donorDonations = await getDonationsByDonorId(donorId);
+      setDonations(donorDonations);
+    } catch (error) {
+      console.error('Error loading donations:', error);
+      setDonations([]);
+    }
+  };
+
+  const handleProfileSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!user) return;
+    
+    setLoading(true);
+    try {
+      const newDonor: Donor = {
+        id: donor?.id || generateId(),
+        user_id: user.id,
+        organization: profileForm.organization,
+        phone: profileForm.phone,
+        address: donor?.address || '',
+        created_at: donor?.created_at || new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
 
-    const newDonor: Donor = {
-      id: donor?.id || generateId(),
-      userId: user.id,
-      organization: profileForm.organization,
-      phone: profileForm.phone,
-      createdAt: donor?.createdAt || new Date().toISOString(),
-    };
-
-    saveDonor(newDonor);
-    setDonor(newDonor);
-    setShowProfileForm(false);
-    loadDonations(newDonor.id);
+      await saveDonor(newDonor);
+      setDonor(newDonor);
+      setShowProfileForm(false);
+      await loadDonations(newDonor.id);
+    } catch (error) {
+      console.error('Error saving donor profile:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
-  const handleDonationSubmit = (donationData: any) => {
+  const handleDonationSubmit = async (donationData: any) => {
     if (!donor) return;
+    
+    setLoading(true);
+    try {
+      const newDonation: Device = {
+        id: generateId(),
+        donor_id: donor.id,
+        name: donationData.name,
+        description: donationData.description,
+        device_type: donationData.deviceType,
+        condition: donationData.condition,
+        quantity: parseInt(donationData.quantity),
+        images: donationData.images || [],
+        status: 'pending',
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString(),
+      };
 
-    const newDonation: Donation = {
-      id: generateId(),
-      donorId: donor.id,
-      name: donationData.name,
-      description: donationData.description,
-      deviceType: donationData.deviceType,
-      condition: donationData.condition,
-      quantity: parseInt(donationData.quantity),
-      status: 'available',
-      createdAt: new Date().toISOString(),
-    };
-
-    saveDonation(newDonation);
-    loadDonations(donor.id);
-    setShowDonationForm(false);
+      await saveDonation(newDonation);
+      await loadDonations(donor.id);
+      setShowDonationForm(false);
+    } catch (error) {
+      console.error('Error saving donation:', error);
+    } finally {
+      setLoading(false);
+    }
   };
 
   const getStatusIcon = (status: string) => {
@@ -189,7 +224,11 @@ const DonorDashboard: React.FC = () => {
       {/* Donations List */}
       <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
         <h2 className="text-xl font-semibold text-gray-900 mb-6">Your Donations</h2>
-        {donations.length === 0 ? (
+        {loading ? (
+          <div className="flex justify-center items-center h-64">
+            <div className="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-blue-500"></div>
+          </div>
+        ) : donations.length === 0 ? (
           <div className="text-center py-12">
             <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
             <h3 className="text-lg font-medium text-gray-900 mb-2">No donations yet</h3>
@@ -216,7 +255,7 @@ const DonorDashboard: React.FC = () => {
                 <div className="space-y-2 text-sm">
                   <div className="flex justify-between">
                     <span className="text-gray-500">Type:</span>
-                    <span className="font-medium">{donation.deviceType}</span>
+                    <span className="font-medium">{donation.device_type}</span>
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-500">Condition:</span>
@@ -228,7 +267,7 @@ const DonorDashboard: React.FC = () => {
                   </div>
                   <div className="flex justify-between">
                     <span className="text-gray-500">Submitted:</span>
-                    <span className="font-medium">{new Date(donation.createdAt).toLocaleDateString()}</span>
+                    <span className="font-medium">{new Date(donation.created_at).toLocaleDateString()}</span>
                   </div>
                 </div>
               </div>

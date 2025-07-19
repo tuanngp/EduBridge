@@ -23,8 +23,12 @@ const deviceReceiptService = {
    * @returns Promise with the confirmation result
    */
   confirmDeviceReceipt: async (transferId: string, data: DeviceReceiptConfirmationData) => {
-    const response = await api.post(`/device-receipts/${transferId}`, data);
-    return response.data;
+    // Use the request method pattern that's used throughout the API service
+    return api.updateTransferStatus(transferId, {
+      status: 'received',
+      notes: data.notes,
+      received_images: data.confirmationImages
+    });
   },
 
   /**
@@ -33,8 +37,8 @@ const deviceReceiptService = {
    * @returns Promise with the receipt details
    */
   getReceiptDetails: async (transferId: string) => {
-    const response = await api.get(`/device-receipts/${transferId}`);
-    return response.data;
+    // Use the getTransfer method which is already implemented in the API service
+    return api.getTransfer(transferId);
   }
 };
 

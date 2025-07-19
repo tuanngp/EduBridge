@@ -3,48 +3,82 @@ export type UserRole = 'donor' | 'school' | 'admin';
 export interface User {
   id: string;
   email: string;
-  role: UserRole;
+  password: string;
   name: string;
-  createdAt: string;
+  role: UserRole;
+  is_verified: boolean;
+  verification_token?: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface Donor {
   id: string;
-  userId: string;
+  user_id: string;
   organization: string;
   phone: string;
-  createdAt: string;
+  address?: string;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface School {
   id: string;
-  userId: string;
-  schoolName: string;
-  location: string;
+  user_id: string;
+  school_name: string;
+  address: string;
   phone: string;
-  createdAt: string;
+  student_count?: number;
+  contact_person: string;
+  verification_documents?: any;
+  is_verified: boolean;
+  verified_at?: string;
+  verified_by?: string;
+  admin_notes?: string;
+  created_at: string;
+  updated_at: string;
 }
 
-export interface Donation {
+export interface Device {
   id: string;
-  donorId: string;
+  donor_id: string;
   name: string;
   description: string;
-  deviceType: string;
+  device_type: string;
   condition: 'new' | 'used-good' | 'used-fair';
   quantity: number;
-  status: 'available' | 'claimed' | 'completed';
-  createdAt: string;
+  images?: any[];
+  status: 'pending' | 'approved' | 'rejected' | 'matched' | 'completed';
+  admin_notes?: string;
+  reviewed_at?: string;
+  reviewed_by?: string;
+  created_at: string;
+  updated_at: string;
 }
 
-export interface Request {
+export interface Need {
   id: string;
-  schoolId: string;
-  deviceType: string;
+  school_id: string;
+  device_type: string;
   quantity: number;
   description: string;
-  status: 'open' | 'fulfilled';
-  createdAt: string;
+  priority: 'low' | 'medium' | 'high' | 'urgent';
+  status: 'pending' | 'approved' | 'fulfilled';
+  created_at: string;
+  updated_at: string;
+}
+
+export interface Transfer {
+  id: string;
+  device_id: string;
+  donor_id: string;
+  school_id: string;
+  message?: string;
+  status: 'pending' | 'approved' | 'rejected' | 'in_transit' | 'delivered' | 'received';
+  notes?: string;
+  received_images?: any;
+  created_at: string;
+  updated_at: string;
 }
 
 export interface AuthContextType {
