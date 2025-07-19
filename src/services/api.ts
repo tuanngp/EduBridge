@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3000/api';
+const API_BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001/api';
 
 interface ApiResponse<T> {
   data?: T;
@@ -840,7 +840,7 @@ class ApiService {
       // The server returns { images: [{ url, public_id, width, height }, ...] }
       // We want to return { data: { urls: [url1, url2, ...] } }
       if (result.images && Array.isArray(result.images)) {
-        const urls = result.images.map(img => img.url);
+        const urls = result.images.map((img: { url: any; }) => img.url);
         return { data: { urls } };
       }
       
