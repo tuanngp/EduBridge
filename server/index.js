@@ -19,6 +19,7 @@ import schoolSuggestionRoutes from "./routes/schoolSuggestions.js";
 import deviceSuggestionRoutes from "./routes/deviceSuggestions.js";
 import voucherRoutes from "./routes/vouchers.js";
 import deviceReceiptRoutes from "./routes/deviceReceipt.js";
+import productAnalyzerRoutes from "./routes/productAnalyzer.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -60,28 +61,22 @@ app.use("/api/school-suggestions", schoolSuggestionRoutes);
 app.use("/api/device-suggestions", deviceSuggestionRoutes);
 app.use("/api/vouchers", voucherRoutes);
 app.use("/api/device-receipts", deviceReceiptRoutes);
+app.use("/api/product-analyzer", productAnalyzerRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {
   res.json({ status: "OK", timestamp: new Date().toISOString() });
 });
 
+// Import error handling middleware
+import { errorLogger, apiErrorHandler, notFoundHandler } from "./middleware/errorHandler.js";
+
 // Error handling middleware
-app.use((err, req, res, next) => {
-  console.error(err.stack);
-  res.status(500).json({
-    error: "Something went wrong!",
-    message:
-      process.env.NODE_ENV === "development"
-        ? err.message
-        : "Internal server error",
-  });
-});
+app.use(errorLogger);
+app.use(apiErrorHandler);
 
 // 404 handler
-app.use("*", (req, res) => {
-  res.status(404).json({ error: "Route not found" });
-});
+app.use("*", notFoundHandler);
 
 app.listen(PORT, () => {
   console.log(`Server running on port ${PORT}`);

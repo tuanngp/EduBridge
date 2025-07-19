@@ -1,5 +1,8 @@
 export type UserRole = 'donor' | 'school' | 'admin';
 
+// Export Product Analyzer types
+export * from './productAnalyzer';
+
 export interface User {
   id: string;
   email: string;
