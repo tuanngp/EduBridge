@@ -1,75 +1,96 @@
-import React, { useState } from 'react';
-import { Eye, EyeOff, Mail, Lock, User, Building2 } from 'lucide-react';
-import { UserRole } from '../../types';
+import React, { useState } from "react";
+import { Eye, EyeOff, Mail, Lock, User, Building2 } from "lucide-react";
+import { UserRole } from "../../types";
 
 interface AuthFormProps {
-  mode: 'login' | 'register';
+  mode: "login" | "register";
   onSubmit: (data: any) => Promise<boolean>;
   onModeChange: () => void;
   loading: boolean;
 }
 
-const AuthForm: React.FC<AuthFormProps> = ({ mode, onSubmit, onModeChange, loading }) => {
+const AuthForm: React.FC<AuthFormProps> = ({
+  mode,
+  onSubmit,
+  onModeChange,
+  loading,
+}) => {
   const [formData, setFormData] = useState({
-    email: '',
-    password: '',
-    name: '',
-    role: 'donor' as UserRole,
+    email: "",
+    password: "",
+    name: "",
+    role: "donor" as UserRole,
   });
   const [showPassword, setShowPassword] = useState(false);
-  const [error, setError] = useState('');
-  const [success, setSuccess] = useState('');
+  const [error, setError] = useState("");
+  const [success, setSuccess] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
 
-    if (mode === 'register' && !formData.name.trim()) {
-      setError('Name is required');
+    if (mode === "register" && !formData.name.trim()) {
+      setError("Tên không được để trống!");
       return;
     }
 
     if (!formData.email.trim() || !formData.password.trim()) {
-      setError('Email and password are required');
+      setError("Email và Mật Khẩu không được để trống!");
       return;
     }
 
     if (formData.password.length < 6) {
-      setError('Password must be at least 6 characters');
+      setError("Mật khẩu phải có ít nhất 6 ký tự!");
       return;
     }
 
     try {
-      console.log(`Attempting to ${mode === 'login' ? 'login' : 'register'}...`);
-      const success = mode === 'login' 
-        ? await onSubmit({ email: formData.email, password: formData.password })
-        : await onSubmit({ 
-            email: formData.email, 
-            password: formData.password, 
-            name: formData.name, 
-            role: formData.role 
-          });
+      console.log(
+        `Attempting to ${mode === "login" ? "login" : "register"}...`
+      );
+      const success =
+        mode === "login"
+          ? await onSubmit({
+              email: formData.email,
+              password: formData.password,
+            })
+          : await onSubmit({
+              email: formData.email,
+              password: formData.password,
+              name: formData.name,
+              role: formData.role,
+            });
 
       if (success) {
-        setSuccess(mode === 'login' ? 'Login successful! Redirecting...' : 'Registration successful! Redirecting...');
-        console.log('Authentication successful, waiting for redirect...');
+        setSuccess(
+          mode === "login"
+            ? "Đăng nhập thành công! Đang chuyển hướng..."
+            : "Đăng ký thành công! Đang chuyển hướng..."
+        );
+        console.log("Xác thực thành công, đang chờ chuyển hướng...");
       } else {
-        setError(mode === 'login' ? 'Invalid credentials' : 'Email already exists');
+        setError(
+          mode === "login"
+            ? "Thông tin đăng nhập không hợp lệ"
+            : "Email đã tồn tại"
+        );
       }
     } catch (err) {
-      console.error('Authentication error:', err);
-      setError('An unexpected error occurred. Please try again.');
+      console.error("Lỗi xác thực:", err);
+      setError("Đã xảy ra lỗi không mong muốn. Vui lòng thử lại.");
     }
   };
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
-    setFormData(prev => ({
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
+  ) => {
+    setFormData((prev) => ({
       ...prev,
       [e.target.name]: e.target.value,
     }));
-    setError('');
-    setSuccess('');
+    setError("");
+    setSuccess("");
   };
 
   return (
@@ -80,21 +101,23 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onSubmit, onModeChange, loadi
             <Building2 className="h-8 w-8 text-white" />
           </div>
           <h2 className="text-3xl font-bold text-gray-900">
-            {mode === 'login' ? 'Welcome back' : 'Join EduBridge'}
+            {mode === "login" ? "Chào mừng trở lại" : "Tham gia EduBridge"}
           </h2>
           <p className="mt-2 text-sm text-gray-600">
-            {mode === 'login' 
-              ? 'Sign in to your account to continue' 
-              : 'Create an account to start connecting with schools and donors'
-            }
+            {mode === "login"
+              ? "Đăng nhập để tiếp tục"
+              : "Tạo tài khoản để bắt đầu hành trình của bạn"}
           </p>
         </div>
 
         <div className="bg-white py-8 px-6 shadow-xl rounded-2xl border border-gray-100">
           <form className="space-y-6" onSubmit={handleSubmit}>
-            {mode === 'register' && (
+            {mode === "register" && (
               <div>
-                <label htmlFor="name" className="block text-sm font-medium text-gray-700 mb-2">
+                <label
+                  htmlFor="name"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
                   Full Name
                 </label>
                 <div className="relative">
@@ -109,14 +132,17 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onSubmit, onModeChange, loadi
                     value={formData.name}
                     onChange={handleChange}
                     className="appearance-none relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition-all duration-200"
-                    placeholder="Enter your full name"
+                    placeholder="Nhập họ tên của bạn"
                   />
                 </div>
               </div>
             )}
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="email"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Email Address
               </label>
               <div className="relative">
@@ -131,13 +157,16 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onSubmit, onModeChange, loadi
                   value={formData.email}
                   onChange={handleChange}
                   className="appearance-none relative block w-full pl-10 pr-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition-all duration-200"
-                  placeholder="Enter your email"
+                  placeholder="Nhập địa chỉ email của bạn"
                 />
               </div>
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label
+                htmlFor="password"
+                className="block text-sm font-medium text-gray-700 mb-2"
+              >
                 Password
               </label>
               <div className="relative">
@@ -147,12 +176,12 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onSubmit, onModeChange, loadi
                 <input
                   id="password"
                   name="password"
-                  type={showPassword ? 'text' : 'password'}
+                  type={showPassword ? "text" : "password"}
                   required
                   value={formData.password}
                   onChange={handleChange}
                   className="appearance-none relative block w-full pl-10 pr-10 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 focus:z-10 sm:text-sm transition-all duration-200"
-                  placeholder="Enter your password"
+                  placeholder="Nhập mật khẩu"
                 />
                 <button
                   type="button"
@@ -168,10 +197,13 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onSubmit, onModeChange, loadi
               </div>
             </div>
 
-            {mode === 'register' && (
+            {mode === "register" && (
               <div>
-                <label htmlFor="role" className="block text-sm font-medium text-gray-700 mb-2">
-                  I am a...
+                <label
+                  htmlFor="role"
+                  className="block text-sm font-medium text-gray-700 mb-2"
+                >
+                  Tôi là ...
                 </label>
                 <select
                   id="role"
@@ -180,9 +212,12 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onSubmit, onModeChange, loadi
                   onChange={handleChange}
                   className="appearance-none relative block w-full px-3 py-3 border border-gray-300 placeholder-gray-500 text-gray-900 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 sm:text-sm transition-all duration-200"
                 >
-                  <option value="donor">Donor - I want to donate devices</option>
-                  <option value="school">School - I need devices for students</option>
-                  <option value="admin">Administrator - I manage the platform</option>
+                  <option value="donor">
+                    Nhà tài trợ - Tôi muốn quyên góp thiết bị
+                  </option>
+                  <option value="school">
+                    Trường học - Tôi cần thiết bị cho học sinh của tôi
+                  </option>
                 </select>
               </div>
             )}
@@ -207,8 +242,10 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onSubmit, onModeChange, loadi
               >
                 {loading ? (
                   <div className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin"></div>
+                ) : mode === "login" ? (
+                  "Đăng nhập"
                 ) : (
-                  mode === 'login' ? 'Sign In' : 'Create Account'
+                  "Tạo tài khoản"
                 )}
               </button>
             </div>
@@ -219,10 +256,9 @@ const AuthForm: React.FC<AuthFormProps> = ({ mode, onSubmit, onModeChange, loadi
                 onClick={onModeChange}
                 className="text-sm text-blue-600 hover:text-blue-500 transition-colors duration-200"
               >
-                {mode === 'login' 
-                  ? "Don't have an account? Sign up" 
-                  : 'Already have an account? Sign in'
-                }
+                {mode === "login"
+                  ? "Chưa có tài khoản? Đăng ký ngay"
+                  : "Đã có tài khoản? Đăng nhập"}
               </button>
             </div>
           </form>

@@ -118,7 +118,7 @@ const SchoolDashboard: React.FC = () => {
           <form onSubmit={handleProfileSubmit} className="space-y-6">
             <div>
               <label htmlFor="schoolName" className="block text-sm font-medium text-gray-700 mb-2">
-                School Name
+                Tên trường
               </label>
               <input
                 id="schoolName"
@@ -127,7 +127,7 @@ const SchoolDashboard: React.FC = () => {
                 value={profileForm.schoolName}
                 onChange={(e) => setProfileForm(prev => ({ ...prev, schoolName: e.target.value }))}
                 className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200"
-                placeholder="Enter your school name"
+                placeholder="Nhập tên trường của bạn"
               />
             </div>
             <div>
@@ -162,7 +162,7 @@ const SchoolDashboard: React.FC = () => {
               type="submit"
               className="w-full bg-gradient-to-r from-green-600 to-blue-600 text-white py-3 px-6 rounded-lg font-medium hover:from-green-700 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
             >
-              Save Profile
+              Lưu hồ sơ
             </button>
           </form>
         </div>
@@ -175,8 +175,8 @@ const SchoolDashboard: React.FC = () => {
       {/* Header */}
       <div className="flex flex-col md:flex-row md:items-center md:justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-gray-900">School Dashboard</h1>
-          <p className="mt-2 text-gray-600">Manage your device requests and browse available donations</p>
+          <h1 className="text-3xl font-bold text-gray-900">Bảng thông tin trường học</h1>
+          <p className="mt-2 text-gray-600">Quản lý các yêu cầu về thiết bị của bạn và duyệt các khoản quyên góp có sẵn</p>
         </div>
         <div className="mt-4 md:mt-0 flex space-x-3">
           <button
@@ -184,14 +184,14 @@ const SchoolDashboard: React.FC = () => {
             className="flex items-center space-x-2 px-4 py-2 border border-gray-300 rounded-lg text-gray-700 hover:bg-gray-50 transition-colors duration-200"
           >
             <Edit3 className="h-4 w-4" />
-            <span>Edit Profile</span>
+            <span>Chỉnh sửa hồ sơ</span>
           </button>
           <button
             onClick={() => setShowRequestForm(true)}
             className="flex items-center space-x-2 bg-gradient-to-r from-green-600 to-blue-600 text-white px-6 py-2 rounded-lg font-medium hover:from-green-700 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
           >
             <Plus className="h-4 w-4" />
-            <span>New Request</span>
+            <span>Yêu cầu mới</span>
           </button>
         </div>
       </div>
@@ -199,18 +199,18 @@ const SchoolDashboard: React.FC = () => {
       {/* Profile Summary */}
       {school && (
         <div className="bg-white rounded-2xl shadow-lg border border-gray-100 p-6">
-          <h2 className="text-xl font-semibold text-gray-900 mb-4">School Information</h2>
+          <h2 className="text-xl font-semibold text-gray-900 mb-4">Thông tin trường học</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             <div>
-              <p className="text-sm text-gray-500">School Name</p>
+              <p className="text-sm text-gray-500">Tên trường</p>
               <p className="font-medium text-gray-900">{school.schoolName}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Location</p>
+              <p className="text-sm text-gray-500">Địa chỉ</p>
               <p className="font-medium text-gray-900">{school.location}</p>
             </div>
             <div>
-              <p className="text-sm text-gray-500">Total Requests</p>
+              <p className="text-sm text-gray-500">Tổng số yêu cầu</p>
               <p className="font-medium text-gray-900">{requests.length}</p>
             </div>
           </div>
@@ -231,7 +231,7 @@ const SchoolDashboard: React.FC = () => {
             >
               <div className="flex items-center space-x-2">
                 <BookOpen className="h-4 w-4" />
-                <span>My Requests</span>
+                <span>Yêu cầu của tôi</span>
               </div>
             </button>
             <button
@@ -244,7 +244,7 @@ const SchoolDashboard: React.FC = () => {
             >
               <div className="flex items-center space-x-2">
                 <Package className="h-4 w-4" />
-                <span>Available Donations</span>
+                <span>Khoản quyên góp sẵn có</span>
               </div>
             </button>
           </nav>
@@ -255,13 +255,13 @@ const SchoolDashboard: React.FC = () => {
             requests.length === 0 ? (
               <div className="text-center py-12">
                 <BookOpen className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No requests yet</h3>
-                <p className="text-gray-500 mb-6">Submit your first device request to get started</p>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Chưa có yêu cầu nào</h3>
+                <p className="text-gray-500 mb-6">Gửi yêu cầu thiết bị đầu tiên của bạn để bắt đầu</p>
                 <button
                   onClick={() => setShowRequestForm(true)}
                   className="bg-gradient-to-r from-green-600 to-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:from-green-700 hover:to-blue-700 transition-all duration-200 shadow-lg hover:shadow-xl"
                 >
-                  Submit First Request
+                  Gửi yêu cầu đầu tiên
                 </button>
               </div>
             ) : (
@@ -278,11 +278,11 @@ const SchoolDashboard: React.FC = () => {
                     <p className="text-gray-600 text-sm mb-3">{request.description}</p>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-gray-500">Quantity:</span>
+                        <span className="text-gray-500">Số lượng:</span>
                         <span className="font-medium">{request.quantity}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-500">Submitted:</span>
+                        <span className="text-gray-500">Ngày gửi:</span>
                         <span className="font-medium">{new Date(request.createdAt).toLocaleDateString()}</span>
                       </div>
                     </div>
@@ -294,8 +294,8 @@ const SchoolDashboard: React.FC = () => {
             availableDonations.length === 0 ? (
               <div className="text-center py-12">
                 <Package className="h-12 w-12 text-gray-400 mx-auto mb-4" />
-                <h3 className="text-lg font-medium text-gray-900 mb-2">No donations available</h3>
-                <p className="text-gray-500">Check back later for new device donations</p>
+                <h3 className="text-lg font-medium text-gray-900 mb-2">Không có khoản quyên góp nào</h3>
+                <p className="text-gray-500">Hãy quay lại sau để biết thông tin về các thiết bị mới được quyên góp</p>
               </div>
             ) : (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
@@ -310,15 +310,15 @@ const SchoolDashboard: React.FC = () => {
                     <p className="text-gray-600 text-sm mb-3">{donation.description}</p>
                     <div className="space-y-2 text-sm">
                       <div className="flex justify-between">
-                        <span className="text-gray-500">Type:</span>
+                        <span className="text-gray-500">Loại:</span>
                         <span className="font-medium">{donation.deviceType}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-500">Quantity:</span>
+                        <span className="text-gray-500">Số lượng:</span>
                         <span className="font-medium">{donation.quantity}</span>
                       </div>
                       <div className="flex justify-between">
-                        <span className="text-gray-500">Available since:</span>
+                        <span className="text-gray-500">Có sẵn kể từ:</span>
                         <span className="font-medium">{new Date(donation.createdAt).toLocaleDateString()}</span>
                       </div>
                     </div>

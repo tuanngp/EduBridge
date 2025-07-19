@@ -47,17 +47,17 @@ const AdminDashboard: React.FC = () => {
 
   const getUserName = (userId: string) => {
     const user = users.find(u => u.id === userId);
-    return user?.name || 'Unknown User';
+    return user?.name || 'Người dùng không xác định';
   };
 
   const getDonorOrganization = (donorId: string) => {
     const donor = donors.find(d => d.id === donorId);
-    return donor?.organization || 'Unknown Organization';
+    return donor?.organization || 'Tổ chức không xác định';
   };
 
   const getSchoolName = (schoolId: string) => {
     const school = schools.find(s => s.id === schoolId);
-    return school?.schoolName || 'Unknown School';
+    return school?.schoolName || 'Trường học không xác định';
   };
 
   const getRoleColor = (role: string) => {
@@ -84,8 +84,8 @@ const AdminDashboard: React.FC = () => {
     <div className="space-y-8">
       {/* Header */}
       <div>
-        <h1 className="text-3xl font-bold text-gray-900">Admin Dashboard</h1>
-        <p className="mt-2 text-gray-600">Monitor platform activity and manage users</p>
+        <h1 className="text-3xl font-bold text-gray-900">Trang quản trị viên</h1>
+        <p className="mt-2 text-gray-600">Theo dõi hoạt động của hệ thống và quản lý người dùng</p>
       </div>
 
       {/* Tab Navigation */}
@@ -124,7 +124,7 @@ const AdminDashboard: React.FC = () => {
                 <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl p-6 text-white">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-blue-100">Total Users</p>
+                      <p className="text-blue-100">Tổng số người dùng</p>
                       <p className="text-2xl font-bold">{stats.totalUsers}</p>
                     </div>
                     <Users className="h-8 w-8 text-blue-200" />
@@ -133,7 +133,7 @@ const AdminDashboard: React.FC = () => {
                 <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-xl p-6 text-white">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-green-100">Total Donations</p>
+                      <p className="text-green-100">Tổng số thiết bị trao tặng</p>
                       <p className="text-2xl font-bold">{stats.totalDonations}</p>
                     </div>
                     <Package className="h-8 w-8 text-green-200" />
@@ -142,7 +142,7 @@ const AdminDashboard: React.FC = () => {
                 <div className="bg-gradient-to-r from-purple-500 to-purple-600 rounded-xl p-6 text-white">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-purple-100">Total Requests</p>
+                      <p className="text-purple-100">Tổng số yêu cầu</p>
                       <p className="text-2xl font-bold">{stats.totalRequests}</p>
                     </div>
                     <BookOpen className="h-8 w-8 text-purple-200" />
@@ -151,7 +151,7 @@ const AdminDashboard: React.FC = () => {
                 <div className="bg-gradient-to-r from-orange-500 to-orange-600 rounded-xl p-6 text-white">
                   <div className="flex items-center justify-between">
                     <div>
-                      <p className="text-orange-100">Available Items</p>
+                      <p className="text-orange-100">Vật phẩm sẵn có</p>
                       <p className="text-2xl font-bold">{stats.availableDonations}</p>
                     </div>
                     <TrendingUp className="h-8 w-8 text-orange-200" />
@@ -162,35 +162,35 @@ const AdminDashboard: React.FC = () => {
               {/* Quick Stats */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="border border-gray-200 rounded-xl p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">User Distribution</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Phân bổ người dùng</h3>
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">Donors</span>
+                      <span className="text-gray-600">Nhà tài trợ</span>
                       <span className="font-medium">{stats.totalDonors}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">Schools</span>
+                      <span className="text-gray-600">Trường học</span>
                       <span className="font-medium">{stats.totalSchools}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">Admins</span>
+                      <span className="text-gray-600">Quản trị viên</span>
                       <span className="font-medium">{users.filter(u => u.role === 'admin').length}</span>
                     </div>
                   </div>
                 </div>
                 <div className="border border-gray-200 rounded-xl p-6">
-                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Activity Summary</h3>
+                  <h3 className="text-lg font-semibold text-gray-900 mb-4">Tóm tắt hoạt động</h3>
                   <div className="space-y-3">
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">Available Donations</span>
+                      <span className="text-gray-600">Thiết bị trao tặng sẵn có</span>
                       <span className="font-medium">{stats.availableDonations}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">Open Requests</span>
+                      <span className="text-gray-600">Tạo yêu cầu</span>
                       <span className="font-medium">{stats.openRequests}</span>
                     </div>
                     <div className="flex justify-between items-center">
-                      <span className="text-gray-600">Completed Donations</span>
+                      <span className="text-gray-600">Hoàn thành quyên góp</span>
                       <span className="font-medium">{donations.filter(d => d.status === 'completed').length}</span>
                     </div>
                   </div>
@@ -201,22 +201,22 @@ const AdminDashboard: React.FC = () => {
 
           {activeTab === 'users' && (
             <div className="space-y-4">
-              <h3 className="text-lg font-semibold text-gray-900">All Users</h3>
+              <h3 className="text-lg font-semibold text-gray-900">Tất cả người dùng</h3>
               <div className="overflow-x-auto">
                 <table className="min-w-full divide-y divide-gray-200">
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Name
+                        Tên
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                         Email
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Role
+                        Vai trò
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Joined
+                        Đã tham gia
                       </th>
                     </tr>
                   </thead>
@@ -253,22 +253,22 @@ const AdminDashboard: React.FC = () => {
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Device
+                        Thiết bị
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Donor
+                        Nhà tài trợ
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Type
+                        Loại
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Quantity
+                        Số lượng
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Status
+                        Trạng thái
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Date
+                        Ngày
                       </th>
                     </tr>
                   </thead>
@@ -311,19 +311,19 @@ const AdminDashboard: React.FC = () => {
                   <thead className="bg-gray-50">
                     <tr>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Device Type
+                        Loại thiết bị
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        School
+                        Trường học
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Quantity
+                        Số lượng
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Status
+                        Trạng thái
                       </th>
                       <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                        Date
+                        Ngày
                       </th>
                     </tr>
                   </thead>
