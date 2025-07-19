@@ -1,3 +1,5 @@
+import dotenv from "dotenv";
+dotenv.config({ path: './.env' });
 import express from "express";
 import cors from "cors";
 import helmet from "helmet";
@@ -11,6 +13,12 @@ import deviceRoutes from "./routes/devices.js";
 import transferRoutes from "./routes/transfers.js";
 import adminRoutes from "./routes/admin.js";
 import uploadRoutes from "./routes/upload.js";
+import suggestionRoutes from "./routes/suggestions.js";
+import deviceHistoryRoutes from "./routes/deviceHistory.js";
+import schoolSuggestionRoutes from "./routes/schoolSuggestions.js";
+import deviceSuggestionRoutes from "./routes/deviceSuggestions.js";
+import voucherRoutes from "./routes/vouchers.js";
+import deviceReceiptRoutes from "./routes/deviceReceipt.js";
 
 const app = express();
 const PORT = process.env.PORT || 3001;
@@ -46,6 +54,12 @@ app.use("/api/devices", deviceRoutes);
 app.use("/api/transfers", transferRoutes);
 app.use("/api/admin", adminRoutes);
 app.use("/api/upload", uploadRoutes);
+app.use("/api/suggestions", suggestionRoutes);
+app.use("/api/device-history", deviceHistoryRoutes);
+app.use("/api/school-suggestions", schoolSuggestionRoutes);
+app.use("/api/device-suggestions", deviceSuggestionRoutes);
+app.use("/api/vouchers", voucherRoutes);
+app.use("/api/device-receipts", deviceReceiptRoutes);
 
 // Health check
 app.get("/api/health", (req, res) => {

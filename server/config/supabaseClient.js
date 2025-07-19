@@ -9,11 +9,15 @@ const __dirname = dirname(__filename);
 const rootDir = resolve(__dirname, '../..');
 const envPath = resolve(rootDir, '.env');
 
+// Đọc file .env
 dotenv.config({ path: envPath });
 
 const supabaseUrl = process.env.SUPABASE_URL;
 const supabaseServiceKey = process.env.SUPABASE_SERVICE_ROLE_KEY;
 
-const supabase = createClient(supabaseUrl, supabaseServiceKey);
+if (!supabaseUrl || !supabaseServiceKey) {
+  console.error('Missing Supabase environment variables in supabaseClient.js');
+  process.exit(1);
+}
 
-export default supabase;
+export const supabase = createClient(supabaseUrl, supabaseServiceKey);

@@ -524,9 +524,15 @@ class ApiService {
     quantity: number;
     images?: string[];
   }) {
+    // Ensure images is always an array
+    const dataToSend = {
+      ...deviceData,
+      images: deviceData.images || []
+    };
+    
     return this.request<{ device: any }>('/devices', {
       method: 'POST',
-      body: JSON.stringify(deviceData),
+      body: JSON.stringify(dataToSend),
     });
   }
 
@@ -724,6 +730,41 @@ class ApiService {
     
     return this.request<{ needs: any[] }>(endpoint);
   }
+  
+  // Device suggestion methods
+  async getDeviceSuggestions(description: string) {
+    return this.request<{ suggestion: any }>('/suggestions/device', {
+      method: 'POST',
+      body: JSON.stringify({ description }),
+    });
+  }
+  
+  async previewDeviceSuggestions(deviceData: {
+    device_type: string;
+    quantity?: number;
+    description?: string;
+    specifications?: Record<string, string>;
+    min_condition?: string;
+    priority?: string;
+  }) {
+    return this.request<{ matchingDevices: any[] }>('/device-suggestions/preview', {
+      method: 'POST',
+      body: JSON.stringify(deviceData),
+    });
+  }
+  
+  // School suggestion methods
+  async getSchoolSuggestions(deviceId: string, limit?: number) {
+    const params = new URLSearchParams();
+    if (limit) params.append('limit', limit.toString());
+    
+    const queryString = params.toString();
+    const endpoint = queryString 
+      ? `/school-suggestions/device/${deviceId}?${queryString}` 
+      : `/school-suggestions/device/${deviceId}`;
+    
+    return this.request<{ suggestedSchools: any[] }>(endpoint);
+  }
 
   private async handleUploadAuth(url: string, body: FormData): Promise<Response> {
     try {
@@ -807,7 +848,17 @@ class ApiService {
         throw new Error(error.error || 'Upload failed');
       }
 
-      return response.json();
+      const result = await response.json();
+      
+      // Transform the response to match our expected format
+      // The server returns { images: [{ url, public_id, width, height }, ...] }
+      // We want to return { data: { urls: [url1, url2, ...] } }
+      if (result.images && Array.isArray(result.images)) {
+        const urls = result.images.map((img: { url: any; }) => img.url);
+        return { data: { urls } };
+      }
+      
+      return result;
     } catch (error) {
       if (error instanceof TypeError && error.message.includes('fetch')) {
         throw new Error('Network connection failed');

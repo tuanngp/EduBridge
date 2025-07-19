@@ -1,5 +1,6 @@
 import jwt from 'jsonwebtoken';
 import supabase from '../config/supabase.js';
+import { isTokenBlacklisted } from '../services/authService.js';
 
 const authenticateToken = async (req, res, next) => {
   const authHeader = req.headers['authorization'];
@@ -23,10 +24,25 @@ const authenticateToken = async (req, res, next) => {
       return res.status(401).json({ error: 'Invalid token' });
     }
 
+    // Store user info in request object
     req.user = user;
+    
+    // Store token info in request object for potential invalidation
+    req.tokenInfo = {
+      userId: decoded.userId,
+      tokenId: decoded.tokenId
+    };
+    
     next();
   } catch (error) {
-    return res.status(403).json({ error: 'Invalid or expired token' });
+    if (error.name === 'TokenExpiredError') {
+      return res.status(401).json({ 
+        error: 'Token expired', 
+        code: 'TOKEN_EXPIRED',
+        message: 'Your session has expired. Please refresh your token.'
+      });
+    }
+    return res.status(403).json({ error: 'Invalid token' });
   }
 };
 
